@@ -6,12 +6,16 @@ function ItemForm({ onAddItem }) {
 
   // Handle form submission
   function handleSubmit(e) {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the default form submission behavior
+
+    // Create the new item object
     const itemData = {
       name: name,
       category: category,
       isInCart: false,
     };
+
+    // Send a POST request to add the new item
     fetch("http://localhost:4000/items", {
       method: "POST",
       headers: {
@@ -19,8 +23,21 @@ function ItemForm({ onAddItem }) {
       },
       body: JSON.stringify(itemData),
     })
-      .then((r) => r.json())
-      .then((newItem) => onAddItem(newItem));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to add item");
+        }
+        return response.json();
+      })
+      .then((newItem) => {
+        // Call the onAddItem callback to update the state in ShoppingList
+        onAddItem(newItem);
+
+        // Reset the form fields
+        setName("");
+        setCategory("Produce");
+      })
+      .catch((error) => console.error("Error adding item:", error));
   }
 
   return (
@@ -32,6 +49,7 @@ function ItemForm({ onAddItem }) {
           name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          placeholder="Enter item name"
         />
       </label>
 

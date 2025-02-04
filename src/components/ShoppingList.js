@@ -10,13 +10,14 @@ function ShoppingList() {
   // Fetch items from the server when the component mounts
   useEffect(() => {
     fetch("http://localhost:4000/items")
-      .then((r) => r.json())
-      .then((items) => setItems(items));
+      .then((response) => response.json())
+      .then((items) => setItems(items))
+      .catch((error) => console.error("Error fetching items:", error));
   }, []);
 
   // Handle adding a new item
   function handleAddItem(newItem) {
-    setItems([...items, newItem]);
+    setItems([...items, newItem]); // Update state with the new item
   }
 
   // Handle updating an item (e.g., toggling isInCart)
